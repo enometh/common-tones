@@ -3,6 +3,8 @@
 ;;; foreign function interfaces using portable cffi library.
 ;;; this file links to cmus.c and clm.c
 
+(cffi:load-foreign-library "libclm.so")
+
 (defun clm-close-output () (clm-close-output-1) (setf *output* nil))
 (defun clm-close-reverb () (clm-close-reverb-1) (setf *reverb* nil))
 
