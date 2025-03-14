@@ -284,6 +284,8 @@
 (defvar clm-cleanup-functions nil)
 
 (defun cleanup-clm ()
+  ;;; XXX
+  (when *dac-pid* (uiop:wait-process *dac-pid*))
   (when clm-cleanup-functions
     (loop for func in clm-cleanup-functions do (funcall func))))
 
