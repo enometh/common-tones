@@ -22,6 +22,7 @@
   :depends-on ("cffi"
 	       "bordeaux-threads")
   :components ((:file "common-tones")
+	       (:file "walker-compat")
 	       (:file "defaults"
 		:depends-on ("common-tones"))
 	       (:file "ffi"
