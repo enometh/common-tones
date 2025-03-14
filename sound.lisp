@@ -73,7 +73,7 @@
 	  	(when *dac-pid*
 	  		(uiop:wait-process *dac-pid*))
 	  	(setf *dac-pid*
-	  		(uiop:run-program "sndplay" command-args :wait wait)))
+	  		(uiop:run-program (cons "sndplay" command-args))))
 	  (if filename (setf last-dac-filename filename)))))
     last-dac-filename))
 
