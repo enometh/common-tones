@@ -3,7 +3,26 @@
 ;;; foreign function interfaces using portable cffi library.
 ;;; this file links to cmus.c and clm.c
 
-(cffi:load-foreign-library "libclm.so")
+;; (cffi:load-foreign-library "libclm.so")
+
+(define-foreign-library (libclm)
+  (:darwin (:or "libclm.dylib" "libclm.so"
+                #+X86 "mac32-libclm.dylib"
+                #+X86-64 "mac64-libclm.dylib"))
+  (:unix (:or "libclm.so"
+              #+X86 "lin32-libclm.so"
+              #+X86-64 "lin64-libclm.so")
+    :search-path #.(mk::system-relative-pathname :common-tones "src/")
+   )
+  (:windows (:or "out123.dll"
+                 #+X86 "win32-libclm.dll"
+                 #+X86-64 "win64-libclm.dll"))
+  (t (:default "libclm")))
+
+#+nil
+cffi::*foreign-libraries*
+
+(use-foreign-library libclm)
 
 (defun clm-close-output () (clm-close-output-1) (setf *output* nil))
 (defun clm-close-reverb () (clm-close-reverb-1) (setf *reverb* nil))
