@@ -6,6 +6,7 @@
 #define SIZEOF_VOID_P 8
 /* #undef HAVE_OSS */
 /* #undef HAVE_ALSA */
+#define HAVE_ALSA 1
 /* #undef MUS_JACK */
 #define WITH_AUDIO 1
 
