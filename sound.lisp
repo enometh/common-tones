@@ -7,8 +7,8 @@
 (defvar *open-input-truename* nil)
 (defvar *clm-scaled-amp* nil)
 
-(defvar last-dac-filename #-(or cmu sbcl openmcl) nil #+(or cmu sbcl openmcl) *clm-file-name*)
-#+(or excl cmu sbcl) (defvar *dac-pid* nil)
+(defvar last-dac-filename *clm-file-name*)
+(defvar *dac-pid* nil)
 
 (defvar *clm-dac-wait-default* nil)
 
@@ -16,7 +16,7 @@
 #+(and acl-80 (not mac-osx)) (setf *clm-player* #'acl-dac)
 
 (defun play (&optional name-1 &key start end (wait *clm-dac-wait-default*))
-  #-(or excl openmcl cmu sbcl) (declare (ignore wait))
+  (declare (ignorable wait))
   (clm-initialize-links)
   (let ((filename (if name-1
 		      (filename->string #-excl (translate-logical-pathname (->pathname (filename->string name-1)))
@@ -43,8 +43,7 @@
 			(if end (setf args (append args (list "-end" (format nil "~A" end)))))))
 		  (apply #'vector args))
 		;;
-		;; CMU, SBCL, and OPENMCL -- use list
-		#+(or cmu sbcl openmcl)
+		;; UIOP -- use list
 		(let ((args (list filename)))
 		  (if (not *clm-player*)
 		      (progn
@@ -55,15 +54,7 @@
 			#+mac-osx (if (= *clm-output-properties-mutable* 0)
 				      (setf args (append args (list "-mutable 0"))))
 			))
-		  args)
-		;;
-		;; ELSE (not always relevant)
-		#-(or cmu sbcl openmcl (and excl (not windoze)))
-		(format nil "~A~A~A"
-			filename
-			(if start (format nil " -start ~A" start) "")
-			(if end (format nil " -end ~A" end) ""))
-		))
+		  args)))
 	  (when (not (probe-file sndplay))
 	    (setf sndplay "sndplay")) ; hope there's a system version, I guess
 	  ;;
