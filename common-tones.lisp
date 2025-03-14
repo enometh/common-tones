@@ -110,7 +110,7 @@
 	  #:*clm-locsig-type*
 	  #:*clm-default-frequency*
 
-	  #:mus-linear #:mus-sinusoidal #:; #:backwards #:compatibility
+	  #:mus-linear #:mus-sinusoidal ; #:backwards :compatibility
 	  #:mus-chebyshev-first-kind #:mus-chebyshev-second-kind
 
 	  #:rectangular-window #:hanning-window #:hann-window #:welch-window #:parzen-window #:bartlett-window #:gaussian-window
