@@ -143,7 +143,7 @@
     (let* ((lsp-name (concatenate 'string "clm_" (string-downcase (lisp->c-name (symbol-name name)))))
 	   ;; since *ins-file-loading* doesnt recompute cfile each time name must be reused.
 	  (c-ff (if common-tones::*ins-file-loading* (intern lsp-name) (gentemp lsp-name)))
-	  (c-ff (intern lsp-name)) ; recompilation (""can't find alien function ...") bugfix thanks to Todd Ingalls
+;;	  (c-ff (intern lsp-name)) ; recompilation (""can't find alien function ...") bugfix thanks to Todd Ingalls
 	  (c-ff-name (symbol-name c-ff))
     (c-ff-cmu (gentemp lsp-name))
    	(ins-file-name (or #+(and excl cltl2) (truename (or excl:*source-pathname* *load-pathname*))
@@ -154,7 +154,7 @@
 			      ))
 	   (c-file-name (or *c-file-name*
 			    ;; try to find compile-time input file name so that the subsequent .c and .o files
-			    ;; are writeten to the same directory.
+			    ;; are written to the same directory.
 			    (filename->string
 			     (merge-pathnames
 			      (concatenate 'string
@@ -170,15 +170,6 @@
 	   (ins-code-file (if common-tones::*ins-file-loading* (concatenate 'string (subseq c-file-name 0 (- (length c-file-name) 2))  ".icl")))
 	   ;; ^ this is for openmcl only, I think
 	   )
-	(format fil "(load-foreign ~S)~%" so-file-name)
-	;; how to get the compiler's output filename?
-	(format fil "(load ~S)~%"
-		(concatenate 'string
-			     (or *clm-ins-directory* (directory-namestring so-file-name))
-			     (filename->string
-			      (pathname-name (or *load-pathname* *compile-file-truename*)))
-			     "."
-			     *clm-fasl-name*)))
       (let ((ins-code nil))
 	;; create C file unless *ins-file-loading* is true and there is
 	;; already a c file and its write date is not later than the lisp file
@@ -228,7 +219,7 @@
 	      ))		;unwind-protect cleanup
 	  `(progn
              ,hookform
-             (eval-when #-excl (:compile-toplevel)
+             (eval-when (:compile-toplevel)
 	       (when (or (not (probe-file ,dependent-file))
 			 (not (probe-file ,antecedent-file))
  			 (> (file-write-date (truename ,antecedent-file)) (file-write-date (truename ,dependent-file)))
@@ -281,7 +272,7 @@
 	     (pushnew ',name *clm-instruments*)
 	     (set-instrument-properties ',name ,c-file-name ,*c-print-function*)
 	     )
-	   (,silly-name)))))
+	   (,silly-name))))))
 
 (defun clm-initialize-links ()
   (when (not *clm-linked*)
