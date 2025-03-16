@@ -101,6 +101,8 @@
 
 (defvar *definstrument-hook* nil)
 
+(defvar *ins-file-for-debug* nil)
+
 (defmacro definstrument (ins-name (&rest args) &body body &environment env)
   (let* ((*header-info* nil)
 	 (*c-file-name* nil)
@@ -150,6 +152,7 @@
 			      #+(and excl (not cltl2)) (truename excl:*source-pathname*)
 			      #+(or clisp cmu sbcl lispworks) (or *load-pathname* *compile-file-truename*) ;this is the CLtL2 name
 			      #+openmcl (or *compile-file-truename* *load-pathname*)
+			      *ins-file-for-debug*
 			      (error "oops -- I can't find ~A's lisp source file!" name)
 			      ))
 	   (c-file-name (or *c-file-name*
