@@ -34,7 +34,7 @@
 		:depends-on ("common-tones"
 			     "generators"))
 	       (:file "sound"
-		:depends-on ("common-tones"))
+		:depends-on ("common-tones" "defaults"))
 	       (:file "defins"
 		:depends-on ("common-tones"))
 	       (:file "env"

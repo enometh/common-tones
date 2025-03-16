@@ -14,7 +14,7 @@
      (:file "ffi" :depends-on ("common-tones" "generators"))
      (:file "mus" :depends-on ("common-tones"))
      (:file "run" :depends-on ("common-tones" "generators"))
-     (:file "sound" :depends-on ("common-tones"))
+     (:file "sound" :depends-on ("common-tones" "defaults"))
      (:file "defins" :depends-on ("common-tones"))
      (:file "env" :depends-on ("common-tones"))
      (:file "legacy" :depends-on ("common-tones"))
