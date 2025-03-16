@@ -45,6 +45,7 @@ cffi::*foreign-libraries*
       err)))
 #+(and sbcl x86-64)
 (defun mus-sound-loop-info (name)
+  (declare (ignorable name))
   (warn "mus-sound-loop-info doesn't work in this system."))
 
 (defun mus-sound-maxamp (filename)

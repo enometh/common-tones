@@ -13,6 +13,7 @@
 |#
 
 (defun rmix (in-file &rest args &key (start-time 0.0) start reverb &allow-other-keys)
+  (declare (ignorable args))
   (let* ((outname (mus-file-name *output*))
 	 (revname (and *reverb* (mus-file-name *reverb*)))
 	 (old-output *output*)

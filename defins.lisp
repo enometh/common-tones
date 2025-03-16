@@ -137,6 +137,8 @@
                                          ',name ',args))))))
          )
 
+    (declare (special *header-info* *c-file-name* *c-compiler-options*
+		      *c-print-function*))
     (setf *current-ins-args* args)
     (let* ((lsp-name (concatenate 'string "clm_" (string-downcase (lisp->c-name (symbol-name name)))))
 	   ;; since *ins-file-loading* doesnt recompute cfile each time name must be reused.
