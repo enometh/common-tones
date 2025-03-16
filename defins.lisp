@@ -13,6 +13,7 @@
 
 (defvar *clm-snd-in-progress* nil)
 (defvar *current-ins-args* nil)
+(defvar *clm-c-directory* nil) ; 19-Mar-24 thanks to Michael Edwards
 
 (defmacro set-instrument-properties (name &optional file print-function)
   `(progn
@@ -71,11 +72,8 @@
 	       #-(or clisp (and openmcl (not linux-target) (not linuxppc-target))) " -c"
 	       " -g"
 	       #-windoze " -O2" ;; this avoids a bizarre segfault in expsrc/Linux/ACL???
-                " -I."   ;; [mus-config.h] clm.h cmus.h
- 	       " -I"     ;;   needs also the actual source dir in case user is compiling elsewhere (mus-config.h also now)
- 	       *clm-source-directory*
-	       " -I"     ;; and mus-config.h...
-	       *clm-binary-directory*
+                " -I"   ;; [mus-config.h] clm.h cmus.h
+		(namestring (mk::system-relative-pathname :common-tones "headers/"))
 	       #+(and sgi (not acl-50)) " -Olimit 3000"
 	       #+(and sgi acl-50) " -Olimit 3000 -n32 -w"
 	       #+windoze " -O1"
@@ -162,7 +160,8 @@
 					   (lisp->c-name #-openmcl (symbol-name name) #+openmcl (string-downcase name))
 					   ;; changed 27-Feb-03 because instrument name with ">" or presumably "&" can confuse Linux
 					   ".c")
-			      ins-file-name))))
+			      (if *clm-c-directory* *clm-c-directory* ins-file-name)))))
+	                      ;; was ins-file-name -- 19-Mar-24
 	   (l-file-name
 	    (concatenate 'string (subseq c-file-name 0 (- (length c-file-name) 2)) #-windoze ".o" #+windoze ".obj")
 	     )
@@ -219,7 +218,7 @@
 	      ))		;unwind-protect cleanup
 	  `(progn
              ,hookform
-             (eval-when (:compile-toplevel)
+             (eval-when (:compile-toplevel :load-toplevel :execute)
 	       (when (or (not (probe-file ,dependent-file))
 			 (not (probe-file ,antecedent-file))
  			 (> (file-write-date (truename ,antecedent-file)) (file-write-date (truename ,dependent-file)))
@@ -230,21 +229,23 @@
 
 		 ;;; ---------------------------------------- COMPILE ----------------------------------------
 
-		 (princ (format nil "; Compiling ~S~%" ,c-file-name))
-     (uiop:run-program (format nil "~A ~A -o ~A~%" ,*clm-compiler-name* ,*c-compiler-options* ,c-file-name ,l-file-name)
-                  :output t)
+		 (princ (format nil "; Compiling ~S to ~S with options ~S ~%" ,c-file-name ,l-file-name ,*c-compiler-options*))
+     (uiop:run-program (format nil "~A ~A -o ~A ~A" ,*clm-compiler-name* ,c-file-name ,l-file-name ,*c-compiler-options*)
+		        :output t)
 
 		 ;;; ---------------------------------------- LOAD ----------------------------------------
 
 			(princ (format nil "; Creating shared object file ~S~%" ,so-file-name))
-      (uiop:run-program "gcc"
-                  `("-shared" "-o" ,so-file-name ,l-file-name ,(uiop:pathname-directory-pathname *libclm-pathname*) "-lm"))))
+      (uiop:run-program
+                  '("gcc" "-shared" "-o" ,so-file-name ,l-file-name ,(namestring *libclm-pathname*) "-lm"))))
 
-	   (cffi:load-foreign-library ,so-file-name)
+	     (cffi:define-foreign-library ,c-ff
+	       (t ,so-file-name))
+	     (cffi:use-foreign-library ,c-ff)
 
      (cffi:defcfun (,c-ff-name ,c-ff-cmu) :int
-       (datar (* :double))
-       (len :int) (datai (* :int)) (ilen :int))
+       (datar (:pointer :double))
+       (len :int) (datai (:pointer :int)) (ilen :int))
 
 	   (defun ,c-ff (c &optional d e f)
 	     (,c-ff-cmu (array-data-address c) d (array-data-address e) f))

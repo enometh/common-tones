@@ -254,7 +254,11 @@
 (defvar *clm-revision* 2)
 
 (defvar *clm-source-directory* "")
-(defvar *clm-binary-directory* "")
+(defvar *clm-binary-directory*
+  	(or #+(and asdf (not defsystem))
+	    (asdf::system-relative-pathname :common-tones "src/")
+	    #+mk-defsystem
+	    (namestring (mk::system-relative-pathname :common-tones "src/"))))
 (defvar *clm-ins-directory* nil)
 (defvar *clm-compiler-name* #-windoze "cc" #+windoze "cl")
 	;this is set in all.lisp via the envirionment variable "CC"
@@ -603,7 +607,12 @@
 (defun expand-filename->pathname (arg) (truename arg))
 (defun expand-filename->string (arg) (namestring (truename arg)))
 
-(defvar *so-ext* nil)
+(defvar *so-ext*
+  #+(or windoze) "dll"
+  #+(or (and excl macosx) (and openmcl (not linux-target) (not linuxppc-target))) "dylib"
+  #-(or windoze (and excl macosx) (and openmcl (not linux-target) (not linuxppc-target))) "so"
+  )
+
 
 ;;; we also need restart-case in all lisps.
 ;;; In later ACL's it is built-in.
@@ -672,3 +681,5 @@
 
 (defvar *output* nil)
 (defvar *reverb* nil)
+
+(defvar *clm-date* "8-May-18")

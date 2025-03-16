@@ -10,13 +10,26 @@
 
 (defvar *clm-file-buffer-size* (* 64 1024))
 
-(defvar *clm-file-name* "test.aiff")
+(defvar *clm-file-name*
+  #+ccrma "/zap/test.snd"
+  #+(or sgi sun hpux linux) "test.snd"
+  #+windoze "test.wav"
+  #-(or windoze ccrma sgi sun hpux linux) "test.aiff"
+  )
 
-(defvar *clm-header-type* mus-aifc)
+(defvar *clm-header-type*
+  #+(or sun hpux linux) mus-next
+  #+(or (and openmcl (not linux-target)) sgi) mus-aifc
+  #+windoze mus-riff
+  #-(or windoze openmcl sgi sun hpux linux) mus-aifc
+  )
 
-(defvar *clm-data-format* mus-ldouble)
+(defvar *clm-data-format*
+  #+(or sun hpux linux windoze) mus-ldouble
+  #-(or sun hpux linux windoze) mus-bdouble
+  )
 
-(defvar *clm-tempfile-data-format* mus-ldouble)
+(defvar *clm-tempfile-data-format* #+little-endian mus-ldouble #-little-endian mus-bdouble)
 (defvar *clm-tempfile-header-type* mus-next)
 
 (defvar *clm-verbose* nil)		; will cause instrument names and so on to be printed out
