@@ -253,7 +253,10 @@
        (len :int) (datai (:pointer :int)) (ilen :int))
 
 	   (defun ,c-ff (c &optional d e f)
-	     (,c-ff-cmu (array-data-address c) d (array-data-address e) f))
+	     #+nil(,c-ff-cmu (array-data-address c) d (array-data-address e) f)
+	     (cffi:with-pointer-to-vector-data (c c)
+	       (cffi:with-pointer-to-vector-data (e e)
+		 (,c-ff-cmu c d e f))))
 
 	   (pushnew ',name *clm-instruments*)
 	   (defun ,name ,args

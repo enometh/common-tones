@@ -99,7 +99,8 @@ cffi::*foreign-libraries*
 (defun sound-srate (name) (mus-sound-srate (fullname name "sound-srate")))
 (defun sound-comment (name) (mus-sound-comment (fullname name "sound-comment")))
 
-#+sbcl (defun array-data-address (array)
+;; unused - use cffi:with-pointer-to-vector-data instead
+#+(and sbcl nil) (defun array-data-address (array)
 	 "Return the physical address of where the actual data of an array is
 stored.
 
