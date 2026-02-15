@@ -12,7 +12,7 @@
 
 (defvar *clm-file-name*
   #+ccrma "/zap/test.snd"
-  #+(or sgi sun hpux linux) "test.snd"
+  #+(or sgi sun hpux linux) "/tmp/test.snd"
   #+windoze "test.wav"
   #-(or windoze ccrma sgi sun hpux linux) "test.aiff"
   )
