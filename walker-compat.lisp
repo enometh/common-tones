@@ -1,6 +1,6 @@
 (in-package "COMMON-TONES")
 
-#+(or cmu lispworks clisp ccl)
+#+(or cmu lispworks clisp clozure)
 (import '(walker:walk-form) "COMMON-TONES")
 #+(or excl)
 (import '(clos:walk-form) "COMMON-TONES")

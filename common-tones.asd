@@ -10,6 +10,7 @@
     :components
     ((:file "common-tones")
      (:file "defaults" :depends-on ("common-tones"))
+     (:file "walk" :if-feature :clozure)
      (:file "walker-compat")
      (:file "ffi" :depends-on ("common-tones" "generators"))
      (:file "mus" :depends-on ("common-tones"))

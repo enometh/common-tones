@@ -1432,6 +1432,26 @@
 
 ;;;
 
+;;; fix openmcl (from clm-5:all.lisp)
+
+#+openmcl
+(eval-when (load eval compile)
+(unless (get-dispatch-macro-character #\# #\,)
+  ;; since the "#," dispatch macro used by walk.lisp is not part of
+  ;; ANSI CL it was (rather gratuitously) removed from openmcl 1.0.
+  ;; we add it back here.
+  (set-dispatch-macro-character
+   #\#
+   #\,
+   #'(lambda (stream subchar numarg)
+       (let* ((sharp-comma-token ccl::*reading-for-cfasl*))
+         (if (or *read-suppress* (not ccl::*compiling-file*) (not sharp-comma-token))
+             (ccl::read-eval stream subchar numarg)
+             (progn
+               (ccl::require-no-numarg subchar numarg)
+               (list sharp-comma-token (read stream t nil t)))))))))
+
+
 #-(or Genera Cloe-Runtime Lucid Xerox Excl KCL IBCL (and dec vax common) :CMU HP-HPLabs
       GCLisp TI pyramid)
 (defvar *globally-special-variables* ())
