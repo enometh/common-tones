@@ -26,6 +26,9 @@
 	       (:file "walker-compat")
 	       (:file "defaults"
 		:depends-on ("common-tones"))
+	       (:file "mcl-doubles"
+		:if-feature :clozure
+		:depends-on ("common-tones"))
 	       (:file "ffi"
 		:depends-on ("common-tones"
 			     "generators"))

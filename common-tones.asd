@@ -12,6 +12,7 @@
      (:file "defaults" :depends-on ("common-tones"))
      (:file "walk" :if-feature :clozure)
      (:file "walker-compat")
+     (:file "mcl-doubles" :if-feature :clozure)
      (:file "ffi" :depends-on ("common-tones" "generators"))
      (:file "mus" :depends-on ("common-tones"))
      (:file "run" :depends-on ("common-tones" "generators"))
