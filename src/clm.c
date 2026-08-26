@@ -382,6 +382,7 @@ static char *int_array_to_string(int *arr, int num_ints, const char *name)
     {
       int i, len;
       char *intstr;
+      if (num_ints > 1024) num_ints = 1024; /* added 9-Apr-24 to try to make gcc happier */
       len = num_ints * MAX_INT_SIZE + 64;
       descr = (char *)calloc(len, sizeof(char));
       intstr = (char *)malloc(MAX_INT_SIZE * sizeof(char));
@@ -12482,7 +12483,7 @@ mus_any *mus_make_locsig(mus_float_t degree, mus_float_t distance, mus_float_t r
 
   gen->type = type;
   gen->reverb = reverb;
-  gen->distance = distance;
+  gen->distance = (distance == 0.0) ? 1.0 : distance; /* was distance 6-Nov-24 */
   gen->degree = degree;
   gen->safe_output = false;
   if (distance > 1.0)
@@ -14164,6 +14165,12 @@ static fftw_complex *c_in_data = NULL, *c_out_data = NULL;
 static fftw_plan c_r_plan, c_i_plan;
 static int last_c_fft_size = 0;
 
+#if (defined(__GNUC__))
+  #define clm_complex_i 1.0i
+#else
+  #define clm_complex_i _Complex_I /* a float, but we want a double */
+#endif
+
 static void mus_fftw_with_imag(mus_float_t *rl, mus_float_t *im, int n, int dir)
 {
   int i, n4;
@@ -14193,17 +14200,17 @@ static void mus_fftw_with_imag(mus_float_t *rl, mus_float_t *im, int n, int dir)
        *   the savings here is about 10%, but that is swamped by the fft itself (say 5-10 in c*).
        * using the new split array code (see below) saves essentially nothing -- perhaps 1 to 2% overall.
        */
-      c_in_data[i] = rl[i] + _Complex_I * im[i];
+      c_in_data[i] = rl[i] + clm_complex_i * im[i];
       i++;
-      c_in_data[i] = rl[i] + _Complex_I * im[i];
+      c_in_data[i] = rl[i] + clm_complex_i * im[i];
       i++;
-      c_in_data[i] = rl[i] + _Complex_I * im[i];
+      c_in_data[i] = rl[i] + clm_complex_i * im[i];
       i++;
-      c_in_data[i] = rl[i] + _Complex_I * im[i];
+      c_in_data[i] = rl[i] + clm_complex_i * im[i];
       i++;
     }
   for (; i < n; i++)
-    c_in_data[i] = rl[i] + _Complex_I * im[i];
+    c_in_data[i] = rl[i] + clm_complex_i * im[i];
 
   if (dir == -1)
     fftw_execute(c_r_plan);
