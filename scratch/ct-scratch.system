@@ -21,3 +21,15 @@
 
 #+nil
 (mk:oos :piston-simple-pulse :load)
+
+(mk:defsystem :claw-cxx-snd2clm
+  :source-pathname *common-tones-source-dir*
+  :binary-pathname *common-tones-binary-dir*
+  :source-extension "lisp"
+  :depends-on ("uiop" )
+  :components
+  ((:module "scratch/gen/bindings/"
+    :components ((:file "x86_64-pc-linux-gnu")))))
+
+#+nil
+(mk:oos :claw-cxx-snd2clm :load)
