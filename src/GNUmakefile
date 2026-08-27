@@ -1,3 +1,4 @@
+CFLAGS += -g3 -Og
 OBJS = clm.o cmus.o headers.o sound.o xen.o audio.o io.o
 HDRS = $(wildcard ../headers/*.h)
 
@@ -11,3 +12,9 @@ libclm.so: $(OBJS) $(HDRS)
 
 sndplay: $(OBJS) sndplay.o
 	$(CC) -o $@ $^ -lm -lasound
+
+libclm.a: $(OBJS)
+	ar cr $@ $^
+
+clean:
+	rm -fv $(OBJS) libclm.so libclm.a
