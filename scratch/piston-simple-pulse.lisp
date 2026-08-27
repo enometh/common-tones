@@ -17,7 +17,11 @@
 ;;; dd39e9cV (C) Rolf Madsen, MIT).
 
 (defpackage "PISTON-SIMPLE-PULSE"
-  (:use "CL"))
+  (:use "CL")
+  (:export
+   "LIVE-AUDIO-PUSH"
+   "START-LIVE-AUDIO"
+   "STOP-LIVE-AUDIO"))
 (in-package "PISTON-SIMPLE-PULSE")
 
 #+nil
@@ -339,11 +343,12 @@ gap in the sound."
 #||
 (setq $la (start-live-audio :backend :pulse))
 (live-audio-push $la
-		 (let ((ret (sine-wave 440 4096 1 44100)))
+		 (let ((ret (sine-wave 440 4096 1 +sample-rate+)))
 		   (make-array (length ret)
 		     :element-type '(signed-byte 16)
 		     :initial-contents
-		     (mapcar 'floor ret))))
+		     (mapcar (lambda (x) (floor (* (/ x 4096) (1- (ash 1 15)))))
+			     ret))))
 (stop-live-audio $la)
 ;; (setq $la (start-live-audio :backend :alsa))
 ||#

@@ -1,0 +1,23 @@
+;;; -*- Mode: LISP; Package: :cl-user; BASE: 10; Syntax: ANSI-Common-Lisp; -*-
+;;;
+;;;   Time-stamp: <>
+;;;   Touched: Tue Aug 25 10:21:12 2026 <enometh@net.meer>
+;;;   Bugs-To: enometh@net.meer
+;;;   Status: Experimental.  Do not redistribute
+;;;   Copyright (C) 2026 Madhu.  All Rights Reserved.
+;;;
+;;; common-tone-scratch
+;;;
+(in-package "CL-USER")
+
+(mk:defsystem :piston-simple-pulse
+  :source-pathname *common-tones-source-dir*
+  :binary-pathname *common-tones-binary-dir*
+  :source-extension "lisp"
+  :depends-on ("cffi" "bordeaux-threads")
+  :components
+  ((:module "scratch/"
+    :components ((:file "piston-simple-pulse")))))
+
+#+nil
+(mk:oos :piston-simple-pulse :load)
